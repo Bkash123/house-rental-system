@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load rental_filters %}
+
+{% block title %}Home - House Rental Management System{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Find Your Perfect Rental Home</h1>
+        <p>Discover comfortable and affordable rental properties in your desired location</p>
+        <div class="hero-buttons">
+            <a href="{% url 'properties' %}" class="btn btn-large btn-white">View Properties</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-large btn-outline">Get Started</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h2>{{ total_properties }}</h2>
+                <p>Available Properties</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ total_landlords }}</h2>
+                <p>Trusted Landlords</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ total_tenants }}</h2>
+                <p>Happy Tenants</p>
+            </div>
+            <div class="stat-card">
+                <h2>100%</h2>
+                <p>Satisfaction Rate</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-properties">
+    <div class="container">
+        <h2 class="section-title">Featured Properties</h2>
+        
+        {% if featured_properties %}
+            <div class="property-grid">
+                {% for property in featured_properties %}
+                    <div class="property-card">
+                        {% if property.image %}
+                            <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-image">
+{% else %}
+    <img src="/static/images/default-property.jpg" alt="No image available" class="property-image">
+{% endif %}
+                        <div class="property-content">
+                            <h3 class="property-title">{{ property.title }}</h3>
+                            <p class="property-location">📍 {{ property.city }}, {{ property.state }}</p>
+                            
+                            <div class="property-details">
+                                <span class="detail-item">🛏️ {{ property.bedrooms }} Beds</span>
+                                <span class="detail-item">🚿 {{ property.bathrooms }} Baths</span>
+                                <span class="detail-item">📐 {{ property.area_sqft }} sqft</span>
+                            </div>
+                            
+                            <p class="property-price">{{ property.rent_amount|npr_currency }}/month</p>
+                            
+                            <a href="{% url 'property_detail' property.id %}" class="btn btn-blue" style="width: 100%; text-align: center;">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; color: #2dcad5;">No featured properties available at the moment.</p>
+        {% endif %}
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'properties' %}" class="btn btn-large btn-blue">View All Properties</a>
+        </div>
+    </div>
+</section>
+
+<section class="stats" style="background-color: #f8f9fa;">
+    <div class="container">
+        <h2 class="section-title">Why Choose RentalHub?</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h2>🏠</h2>
+                <h3>Wide Selection</h3>
+                <p>Browse through hundreds of verified rental properties</p>
+            </div>
+            <div class="stat-card">
+                <h2>💰</h2>
+                <h3>Best Prices</h3>
+                <p>Find competitive rental rates that fit your budget</p>
+            </div>
+            <div class="stat-card">
+                <h2>🔒</h2>
+                <h3>Secure Platform</h3>
+                <p>Safe and secure transactions for peace of mind</p>
+            </div>
+            <div class="stat-card">
+                <h2>📞</h2>
+                <h3>24/7 Support</h3>
+                <p>Our team is always here to help you</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

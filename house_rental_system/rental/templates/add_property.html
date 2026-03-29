@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if property %}Edit{% else %}Add{% endif %} Property{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 800px;">
+    <h2 class="form-title">{% if property %}Edit Property{% else %}Add New Property{% endif %}</h2>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Property Title *</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <ul class="errorlist">
+                    {% for error in form.title.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description *</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <ul class="errorlist">
+                    {% for error in form.description.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="filter-row">
+            <div class="form-group">
+                <label for="{{ form.property_type.id_for_label }}">Property Type *</label>
+                {{ form.property_type }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.status.id_for_label }}">Status *</label>
+                {{ form.status }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.address.id_for_label }}">Address *</label>
+            {{ form.address }}
+        </div>
+        
+        <div class="filter-row">
+            <div class="form-group">
+                <label for="{{ form.city.id_for_label }}">City *</label>
+                {{ form.city }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.state.id_for_label }}">State *</label>
+                {{ form.state }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.zip_code.id_for_label }}">Zip Code *</label>
+                {{ form.zip_code }}
+            </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="form-group">
+                <label for="{{ form.bedrooms.id_for_label }}">Bedrooms *</label>
+                {{ form.bedrooms }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.bathrooms.id_for_label }}">Bathrooms *</label>
+                {{ form.bathrooms }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.area_sqft.id_for_label }}">Area (sqft) *</label>
+                {{ form.area_sqft }}
+            </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="form-group">
+                <label for="{{ form.rent_amount.id_for_label }}">Monthly Rent *</label>
+                {{ form.rent_amount }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.security_deposit.id_for_label }}">Security Deposit *</label>
+                {{ form.security_deposit }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.amenities.id_for_label }}">Amenities *</label>
+            {{ form.amenities }}
+            <p class="form-help">Enter amenities separated by commas (e.g., WiFi, Parking, Pool, Gym)</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Property Image</label>
+            {{ form.image }}
+            {% if property and property.image %}
+                <p class="form-help">Current image: <a href="{{ property.image.url }}" target="_blank">View</a></p>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label>
+                {{ form.is_featured }}
+                Feature this property on homepage
+            </label>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-green" style="flex: 1;">{% if property %}Update{% else %}Add{% endif %} Property</button>
+            <a href="{% url 'landlord_dashboard' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}House Rental Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{% url 'home' %}">🏠 RentalHub</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'properties' %}">Properties</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                
+                {% if user.is_authenticated %}
+                    {% if user.user_type == 'tenant' %}
+                        <li><a href="{% url 'tenant_dashboard' %}">Dashboard</a></li>
+                    {% elif user.user_type == 'landlord' %}
+                        <li><a href="{% url 'landlord_dashboard' %}">Dashboard</a></li>
+                    {% elif user.user_type == 'admin' or user.is_staff %}
+                        <li><a href="{% url 'admin_dashboard' %}">Admin</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Logout ({{ user.username }})</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="btn-primary">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                    <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About RentalHub</h3>
+                    <p>Your trusted platform for finding and managing rental properties.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'properties' %}">Properties</a></li>
+                        <li><a href="{% url 'about' %}">About</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>Email: info@rentalhub.com</p>
+                    <p>Phone: (123) 456-7890</p>
+                    <p>Address: 123 Main St, City, State</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 RentalHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

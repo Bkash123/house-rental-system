@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard">
+        <h1 class="dashboard-title">Admin Dashboard</h1>
+        
+        <div class="dashboard-stats">
+            <div class="dashboard-stat">
+                <h3>{{ total_users }}</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="dashboard-stat" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <h3>{{ total_tenants }}</h3>
+                <p>Tenants</p>
+            </div>
+            <div class="dashboard-stat" style="background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);">
+                <h3>{{ total_landlords }}</h3>
+                <p>Landlords</p>
+            </div>
+            <div class="dashboard-stat" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h3>{{ total_properties }}</h3>
+                <p>Properties</p>
+            </div>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Recent Users</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>User Type</th>
+                        <th>Approved</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.get_user_type_display }}</td>
+                            <td>
+                                {% if user.is_approved %}
+                                    <span class="badge badge-success">Yes</span>
+                                {% else %}
+                                    <span class="badge badge-warning">No</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if not user.is_approved %}
+                                    <a href="{% url 'approve_user' user.id %}" class="btn btn-green">Approve</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Recent Properties</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Landlord</th>
+                        <th>City</th>
+                        <th>Rent</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in properties %}
+                        <tr>
+                            <td><a href="{% url 'property_detail' property.id %}">{{ property.title }}</a></td>
+                            <td>{{ property.landlord.username }}</td>
+                            <td>{{ property.city }}</td>
+                            <td>${{ property.rent_amount }}</td>
+                            <td>
+                                {% if property.status == 'available' %}
+                                    <span class="badge badge-success">Available</span>
+                                {% else %}
+                                    <span class="badge badge-info">{{ property.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ property.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Recent Bookings</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Property</th>
+                        <th>Move-in Date</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.tenant.username }}</td>
+                            <td>{{ booking.property.title }}</td>
+                            <td>{{ booking.move_in_date|date:"M d, Y" }}</td>
+                            <td>
+                                {% if booking.status == 'approved' %}
+                                    <span class="badge badge-success">Approved</span>
+                                {% elif booking.status == 'pending' %}
+                                    <span class="badge badge-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ booking.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ booking.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Contact Messages</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Read</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for message in contact_messages %}
+                        <tr>
+                            <td>{{ message.name }}</td>
+                            <td>{{ message.email }}</td>
+                            <td>{{ message.subject }}</td>
+                            <td>
+                                {% if message.is_read %}
+                                    <span class="badge badge-success">Yes</span>
+                                {% else %}
+                                    <span class="badge badge-warning">No</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ message.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

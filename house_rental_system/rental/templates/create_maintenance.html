@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance Request - RentalHub{% endblock %}
+{% block content %}
+<div class='container' style='max-width: 680px; padding: 2rem 20px;'>
+  <div class='form-container' style='padding: 0; overflow: hidden;'>
+    <div style='background: #1a202c; padding: 1.5rem 2rem;'>
+      <h2 style='color: #fff; margin: 0 0 4px;'>🔧 Maintenance Request</h2>
+      <p style='color: #a0aec0; margin: 0; font-size: 0.9rem;'>Describe the issue and your landlord will be notified.</p>
+    </div>
+    <div style='padding: 2rem;'>
+      <form method='post'>
+        {% csrf_token %}
+        <div class='form-group'>
+          <label>Property *</label>
+          <select name='property' class='form-control'>
+            <option value=''>-- Select Property --</option>
+            {% for p in form.property.field.queryset %}
+              <option value='{{ p.pk }}'>{{ p }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class='form-group'>
+          <label>Issue Title *</label>
+          <input type='text' name='title' class='form-control' placeholder='e.g. Leaking faucet'>
+        </div>
+        <div class='form-group'>
+          <label>Description *</label>
+          <textarea name='description' class='form-control' rows='4' placeholder='Describe the problem in detail...'></textarea>
+        </div>
+        <div class='form-group'>
+          <label>Priority *</label>
+          <select name='priority' class='form-control'>
+            {% for value, label in form.priority.field.choices %}
+              <option value='{{ value }}'>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class='form-actions'>
+          <button type='submit' class='btn btn-orange' style='flex:1;'>Submit Request</button>
+          <a href='{% url 'tenant_dashboard' %}' class='btn btn-outline'>Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

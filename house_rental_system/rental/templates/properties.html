@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load rental_filters %}
+
+{% block title %}Properties - House Rental Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Available Properties</h1>
+    
+    <div class="search-filters">
+        <form method="get">
+            <div class="filter-row">
+                <div class="form-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search by location or title..." value="{{ search_query }}">
+                </div>
+                
+                <div class="form-group">
+                    <select name="property_type" class="form-control">
+                        <option value="">All Property Types</option>
+                        <option value="apartment" {% if property_type == 'apartment' %}selected{% endif %}>Apartment</option>
+                        <option value="house" {% if property_type == 'house' %}selected{% endif %}>House</option>
+                        <option value="studio" {% if property_type == 'studio' %}selected{% endif %}>Studio</option>
+                        <option value="condo" {% if property_type == 'condo' %}selected{% endif %}>Condo</option>
+                        <option value="villa" {% if property_type == 'villa' %}selected{% endif %}>Villa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <select name="city" class="form-control">
+                        <option value="">All Cities</option>
+                        {% for c in cities %}
+                            <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <input type="number" name="min_rent" class="form-control" placeholder="Min Rent (NPR)" value="{{ min_rent }}">
+                </div>
+                
+                <div class="form-group">
+                    <input type="number" name="max_rent" class="form-control" placeholder="Max Rent (NPR)" value="{{ max_rent }}">
+                </div>
+                
+                <div class="form-group">
+                    <select name="sort" class="form-control">
+                        <option value="-created_at" {% if sort_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                        <option value="rent_amount" {% if sort_by == 'rent_amount' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="-rent_amount" {% if sort_by == '-rent_amount' %}selected{% endif %}>Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-blue">Apply Filters</button>
+            <a href="{% url 'properties' %}" class="btn btn-outline">Clear Filters</a>
+        </form>
+    </div>
+    
+    {% if properties %}
+        <div class="property-grid">
+            {% for property in properties %}
+                <div class="property-card">
+                    {% if property.image %}
+                        <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-image">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x300?text=No+Image" alt="{{ property.title }}" class="property-image">
+                    {% endif %}
+                    
+                    <div class="property-content">
+                        <h3 class="property-title">{{ property.title }}</h3>
+                        <p class="property-location">📍 {{ property.city }}, {{ property.state }}</p>
+                        
+                        <div class="property-details">
+                            <span class="detail-item">🛏️ {{ property.bedrooms }} Beds</span>
+                            <span class="detail-item">🚿 {{ property.bathrooms }} Baths</span>
+                            <span class="detail-item">📐 {{ property.area_sqft }} sqft</span>
+                        </div>
+                        
+                        <p class="property-price">{{ property.rent_amount|npr_currency }}/month</p>
+                        
+                        <a href="{% url 'property_detail' property.id %}" class="btn btn-blue" style="width: 100%; text-align: center;">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if properties.has_other_pages %}
+            <div class="pagination">
+                {% if properties.has_previous %}
+                    <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">&laquo; First</a>
+                    <a href="?page={{ properties.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                {% endif %}
+                
+                <span class="current">Page {{ properties.number }} of {{ properties.paginator.num_pages }}</span>
+                
+                {% if properties.has_next %}
+                    <a href="?page={{ properties.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                    <a href="?page={{ properties.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">Last &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p style="text-align: center; color: #7f8c8d; margin: 3rem 0;">No properties found matching your criteria.</p>
+    {% endif %}
+</div>
+{% endblock %}

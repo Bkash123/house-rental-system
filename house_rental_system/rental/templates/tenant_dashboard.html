@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load rental_filters %}
+
+{% block title %}Tenant Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+            <a href="{% url 'properties' %}" class="btn btn-blue">Browse Properties</a>
+        </div>
+        
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>My Booking Requests</h2>
+                <a href="{% url 'booking_request' %}" class="btn btn-green">New Request</a>
+            </div>
+            
+            {% if bookings %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Move-in Date</th>
+                            <th>Status</th>
+                            <th>Rent Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'property_detail' booking.property.id %}">{{ booking.property.title }}</a>
+                                </td>
+                                <td>{{ booking.move_in_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if booking.status == 'approved' %}
+                                        <span class="badge badge-success">Approved</span>
+                                    {% elif booking.status == 'pending' %}
+                                        <span class="badge badge-warning">Pending</span>
+                                    {% elif booking.status == 'rejected' %}
+                                        <span class="badge badge-danger">Rejected</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">{{ booking.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ booking.property.rent_amount|npr_currency }}</td>
+                                <td class="table-actions">
+                                    {% if booking.status == 'approved' %}
+                                        <a href="{% url 'payment' booking.id %}" class="btn btn-green">Pay Rent</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You haven't made any booking requests yet. <a href="{% url 'properties' %}">Browse properties</a> to get started!</p>
+            {% endif %}
+        </div>
+        
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Maintenance Requests</h2>
+                <a href="{% url 'maintenance_request' %}" class="btn btn-orange">New Request</a>
+            </div>
+            
+            {% if maintenance_requests %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Property</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in maintenance_requests %}
+                            <tr>
+                                <td>{{ request.title }}</td>
+                                <td>{{ request.property.title }}</td>
+                                <td>
+                                    {% if request.priority == 'urgent' %}
+                                        <span class="badge badge-danger">Urgent</span>
+                                    {% elif request.priority == 'high' %}
+                                        <span class="badge badge-warning">High</span>
+                                    {% else %}
+                                        <span class="badge badge-info">{{ request.get_priority_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if request.status == 'resolved' %}
+                                        <span class="badge badge-success">Resolved</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">{{ request.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ request.created_at|date:"M d, Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No maintenance requests.</p>
+            {% endif %}
+        </div>
+        
+        <div class="dashboard-section">
+            <h2>Payment History</h2>
+            
+            {% if payments %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Transaction ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                            <tr>
+                                <td>{{ payment.booking.property.title }}</td>
+                                <td>{{ payment.amount|npr_currency }}</td>
+                                <td>{{ payment.get_payment_type_display }}</td>
+                                <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if payment.status == 'completed' %}
+                                        <span class="badge badge-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ payment.transaction_id|truncatechars:15 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No payment history available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

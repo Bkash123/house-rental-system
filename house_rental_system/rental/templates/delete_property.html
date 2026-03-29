@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Property{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="form-title" style="color: #e74c3c;">Delete Property</h2>
+    
+    <div style="background-color: #f8d7da; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #dc3545; margin-bottom: 2rem;">
+        <p style="margin: 0; color: #721c24;"><strong>Warning:</strong> This action cannot be undone!</p>
+    </div>
+    
+    <p>Are you sure you want to delete the following property?</p>
+    
+    <div style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0;">
+        <h3>{{ property.title }}</h3>
+        <p><strong>Location:</strong> {{ property.city }}, {{ property.state }}</p>
+        <p><strong>Rent:</strong> ${{ property.rent_amount }}/month</p>
+        <p><strong>Status:</strong> {{ property.get_status_display }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-red" style="flex: 1;">Yes, Delete Property</button>
+            <a href="{% url 'landlord_dashboard' %}" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

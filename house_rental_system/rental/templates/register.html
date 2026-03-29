@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - House Rental Management System{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 700px;">
+    <h2 class="form-title">Create Your Account</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username *</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <ul class="errorlist">
+                    {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email *</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <ul class="errorlist">
+                    {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">First Name</label>
+            {{ form.first_name }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+            {{ form.last_name }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.user_type.id_for_label }}">I am a *</label>
+            {{ form.user_type }}
+            {% if form.user_type.errors %}
+                <ul class="errorlist">
+                    {% for error in form.user_type.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+            {{ form.phone }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.address.id_for_label }}">Address</label>
+            {{ form.address }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password1.id_for_label }}">Password *</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password1.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.password2.id_for_label }}">Confirm Password *</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password2.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-green" style="flex: 1;">Register</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 1rem;">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}

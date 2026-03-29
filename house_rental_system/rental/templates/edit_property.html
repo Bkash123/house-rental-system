@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .edit-wrapper {
+    min-height: 100vh;
+    background: #F8F6F2;
+    padding: 40px 20px;
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  }
+
+  .edit-card {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .edit-header {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 100%);
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .edit-header-icon {
+    width: 48px;
+    height: 48px;
+    background: #F5A623;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .edit-header h1 {
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .edit-header p {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    margin: 4px 0 0;
+  }
+
+  .edit-body {
+    padding: 36px 40px;
+  }
+
+  .form-section {
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #F5A623;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #FFF3DC;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-grid.full { grid-template-columns: 1fr; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: 0.2px;
+  }
+
+  .field-group input[type="text"],
+  .field-group input[type="number"],
+  .field-group select,
+  .field-group textarea {
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: #1A1A2E;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #FAFAFA;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .field-group input:focus,
+  .field-group select:focus,
+  .field-group textarea:focus {
+    border-color: #F5A623;
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.12);
+    background: #fff;
+  }
+
+  .field-group textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  /* Image upload area */
+  .image-upload-area {
+    border: 2px dashed #E5E7EB;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #FAFAFA;
+    position: relative;
+  }
+
+  .image-upload-area:hover {
+    border-color: #F5A623;
+    background: #FFF9EE;
+  }
+
+  .image-upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+
+  .upload-text {
+    font-size: 0.9rem;
+    color: #6B7280;
+    margin: 0;
+  }
+
+  .upload-text strong { color: #F5A623; }
+
+  /* Current image preview */
+  .current-image {
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #E5E7EB;
+  }
+
+  .current-image img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .current-image-label {
+    background: #F8F6F2;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  /* Checkbox styling */
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #FFF9EE;
+    border-radius: 10px;
+    border: 1.5px solid #FFE4A0;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #F5A623;
+    cursor: pointer;
+  }
+
+  .checkbox-group label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1A1A2E;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .checkbox-group span {
+    font-size: 0.78rem;
+    color: #6B7280;
+    margin-left: auto;
+  }
+
+  /* Buttons */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    padding: 24px 40px;
+    background: #F8F6F2;
+    border-top: 1px solid #E8E4DC;
+  }
+
+  .btn-save {
+    flex: 1;
+    background: #F5A623;
+    color: #1A1A2E;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-save:hover {
+    background: #D4881A;
+    transform: translateY(-1px);
+  }
+
+  .btn-cancel {
+    background: #fff;
+    color: #6B7280;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .btn-cancel:hover {
+    border-color: #9CA3AF;
+    color: #374151;
+  }
+
+  /* Alert messages */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+  }
+
+  @media (max-width: 600px) {
+    .edit-body { padding: 24px 20px; }
+    .edit-header { padding: 24px 20px; }
+    .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+    .form-actions { padding: 20px; flex-direction: column; }
+  }
+</style>
+
+<div class="edit-wrapper">
+  <div class="edit-card">
+
+    <div class="edit-header">
+      <div class="edit-header-icon">🏠</div>
+      <div>
+        <h1>Edit Property</h1>
+        <p>Update your property information and images</p>
+      </div>
+    </div>
+
+    <div class="edit-body">
+
+      {% if form.errors %}
+      <div class="alert alert-error">
+        Please fix the errors below before saving.
+      </div>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Basic Info -->
+        <div class="form-section">
+          <div class="section-label">Basic Information</div>
+          <div class="form-grid full">
+            <div class="field-group">
+              <label for="{{ form.title.id_for_label }}">Property Title</label>
+              {{ form.title }}
+              {% if form.title.errors %}<span style="color:#DC2626;font-size:0.78rem;">{{ form.title.errors.0 }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="form-grid full" style="margin-top:16px;">
+            <div class="field-group">
+              <label for="{{ form.description.id_for_label }}">Description</label>
+              {{ form.description }}
+            </div>
+          </div>
+          <div class="form-grid" style="margin-top:16px;">
+            <div class="field-group">
+              <label for="{{ form.property_type.id_for_label }}">Property Type</label>
+              {{ form.property_type }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.status.id_for_label }}">Status</label>
+              {{ form.status }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-section">
+          <div class="section-label">📍 Location</div>
+          <div class="form-grid full">
+            <div class="field-group">
+              <label for="{{ form.address.id_for_label }}">Address</label>
+              {{ form.address }}
+            </div>
+          </div>
+          <div class="form-grid three" style="margin-top:16px;">
+            <div class="field-group">
+              <label for="{{ form.city.id_for_label }}">City</label>
+              {{ form.city }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.state.id_for_label }}">State / Province</label>
+              {{ form.state }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.zip_code.id_for_label }}">Zip Code</label>
+              {{ form.zip_code }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="form-section">
+          <div class="section-label">🛏 Property Details</div>
+          <div class="form-grid three">
+            <div class="field-group">
+              <label for="{{ form.bedrooms.id_for_label }}">Bedrooms</label>
+              {{ form.bedrooms }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.bathrooms.id_for_label }}">Bathrooms</label>
+              {{ form.bathrooms }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.area_sqft.id_for_label }}">Area (sqft)</label>
+              {{ form.area_sqft }}
+            </div>
+          </div>
+          <div class="form-grid" style="margin-top:16px;">
+            <div class="field-group">
+              <label for="{{ form.rent_amount.id_for_label }}">Rent Amount (रू)</label>
+              {{ form.rent_amount }}
+            </div>
+            <div class="field-group">
+              <label for="{{ form.security_deposit.id_for_label }}">Security Deposit (रू)</label>
+              {{ form.security_deposit }}
+            </div>
+          </div>
+          <div class="form-grid full" style="margin-top:16px;">
+            <div class="field-group">
+              <label for="{{ form.amenities.id_for_label }}">Amenities <span style="color:#9CA3AF;font-weight:400;">(comma-separated)</span></label>
+              {{ form.amenities }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="form-section">
+          <div class="section-label">📷 Property Image</div>
+
+          {% if property.image %}
+          <div class="current-image">
+            <div class="current-image-label">Current Image</div>
+            <img src="{{ property.image.url }}" alt="{{ property.title }}">
+          </div>
+          <p style="font-size:0.78rem;color:#9CA3AF;margin:8px 0 12px;">Upload a new image to replace the current one.</p>
+          {% endif %}
+
+          <div class="image-upload-area" id="uploadArea">
+            <input type="file" name="{{ form.image.html_name }}" id="{{ form.image.id_for_label }}" accept="image/*" onchange="updateUploadLabel(this)">
+            <div class="upload-icon">📁</div>
+            <p class="upload-text" id="uploadLabel"><strong>Click to upload</strong> or drag and drop<br>PNG, JPG, WEBP up to 10MB</p>
+          </div>
+        </div>
+
+        <!-- Featured -->
+        <div class="form-section">
+          <div class="section-label">⭐ Visibility</div>
+          <div class="checkbox-group">
+            {{ form.is_featured }}
+            <label for="{{ form.is_featured.id_for_label }}">Mark as Featured Property</label>
+            <span>Appears on homepage</span>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="form-actions">
+      <a href="{% url 'landlord_dashboard' %}" class="btn-cancel">← Cancel</a>
+      <button type="submit" class="btn-save" onclick="this.closest('.edit-body').querySelector('form').submit()">
+        💾 Save Changes
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function updateUploadLabel(input) {
+    const label = document.getElementById('uploadLabel');
+    if (input.files && input.files[0]) {
+      label.innerHTML = `<strong>${input.files[0].name}</strong><br><span style="color:#10B981;">✓ Ready to upload</span>`;
+      document.getElementById('uploadArea').style.borderColor = '#10B981';
+      document.getElementById('uploadArea').style.background = '#F0FDF4';
+    }
+  }
+</script>
+
+{% endblock %}
